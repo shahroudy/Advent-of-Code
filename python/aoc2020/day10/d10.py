@@ -1,4 +1,3 @@
-import re
 from itertools import combinations
 from myutils.file_reader import read_int_list
 
@@ -18,14 +17,12 @@ class AdapterArray:
 
     def calc_combinations(self, nums):
         count = 1
-        for comb_size in range(2, len(nums)):
-            for curr_comb in list(combinations(nums, comb_size)):
+        for comb_size in range(0, len(nums)-2):
+            for curr in list(combinations(nums[1:-1], comb_size)):
+                curr_list = list(curr)
+                curr_list.extend([nums[0], nums[-1]])
                 valid = True
-                if nums[0] not in curr_comb:
-                    continue
-                if nums[-1] not in curr_comb:
-                    continue
-                comb_sorted = sorted(curr_comb)
+                comb_sorted = sorted(curr_list)
                 for j in range(len(comb_sorted)-1):
                     if comb_sorted[j+1] - comb_sorted[j] > 3:
                         valid = False
