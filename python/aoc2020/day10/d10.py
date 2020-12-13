@@ -15,37 +15,16 @@ class AdapterArray:
         steps[3] += 1
         return steps[1]*steps[3]
 
-    def calc_combinations(self, nums):
-        count = 1
-        for comb_size in range(0, len(nums)-2):
-            for curr in list(combinations(nums[1:-1], comb_size)):
-                curr_list = list(curr)
-                curr_list.extend([nums[0], nums[-1]])
-                valid = True
-                comb_sorted = sorted(curr_list)
-                for j in range(len(comb_sorted)-1):
-                    if comb_sorted[j+1] - comb_sorted[j] > 3:
-                        valid = False
-                        break
-                if valid:
-                    count += 1
-        return count
-
     def calc_overall_combinations(self):
         s = [0] + sorted(self.nums)
-        c = 1
-        nums = [0]
-        for i in range(len(s)-1):
-            d = s[i+1]-s[i]
-            if d == 3:
-                c *= self.calc_combinations(nums)
-                nums = [s[i+1]]
-            else:
-                nums.append(s[i+1])
-        if len(nums):
-            nums.append(nums[-1]+3)
-            c *= self.calc_combinations(nums)
-        return c
+        c = [0] * len(s)
+        c[0] = 1
+
+        for i in range(1, len(c)):
+            for j in range(i-3, i):
+                if j >= 0 and s[j] >= s[i] - 3:
+                    c[i] += c[j]
+        return c[-1]
 
 
 if __name__ == '__main__':
