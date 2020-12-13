@@ -1,8 +1,3 @@
-import re
-from collections import *
-from itertools import *
-from myutils.file_reader import *
-
 class ShuttleSearch:
     def __init__(self, filename):
         self.read_file(filename)
