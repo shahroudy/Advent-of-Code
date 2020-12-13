@@ -1,12 +1,13 @@
+from myutils.file_reader import read_str_list
+from myutils.factorization import Factorization
 class ShuttleSearch:
     def __init__(self, filename):
         self.read_file(filename)
 
     def read_file(self, filename):
-        with open(filename, 'r') as file:
-            self.current_time = int(file.readline().strip())
-            bus_str = file.readline().strip().split(',')
-            self.buses = [int(b if b != 'x' else 0) for b in bus_str]
+        strs = read_str_list(filename)
+        self.current_time = int(strs[0])
+        self.buses = [int(b if b != 'x' else 0) for b in strs[1:]]
 
     def find_earliest(self):
         min_wait = -1
@@ -33,13 +34,15 @@ class ShuttleSearch:
         # sort in ascending order of denominators
         pairs_sorted = sorted(den_rem_pairs, key=lambda x:x[0])
 
-        multiples = 1
+        factorization = Factorization(max(self.buses))
+        factors = []
         result = 0
         for p in pairs_sorted:
             den, rem = p
+            step = factorization.least_common_multiple(factors)
             while (result % den) != rem:
-                result += multiples
-            multiples *= den
+                result += step
+            factors.append(den)
         return result
 
 
