@@ -1,7 +1,7 @@
 import re
-from collections import *
-from itertools import *
-from myutils.file_reader import *
+from collections import defaultdict
+from itertools import product
+from myutils.file_reader import read_lines
 
 
 class DockingData:
@@ -16,43 +16,36 @@ class DockingData:
     def bit_mask(self, value):
         mask = self.mask
         bits = list(f'{value:036b}')
-        mbits = list(mask)
         out = []
         for i in range(len(mask)):
             if mask[i] == 'X':
                 out.append(bits[i])
             else:
-                out.append(mbits[i])
+                out.append(mask[i])
         outs = ''.join(out)
         return int(outs, 2)
 
 
     def get_addresses(self, addr):
         mask = self.mask
-        bits = f'{int(addr):036b}'
-        bits = list(bits)
-        mbits = list(mask)
+        bits = list(f'{int(addr):036b}')
         out = []
         for i in range(len(mask)):
-            if mbits[i] in ['1', 'X']:
+            if mask[i] in ['1', 'X']:
                 out.append(mask[i])
             else:
                 out.append(bits[i])
-        xcount = out.count('X')
+
         outout = []
-        for i in range(2**xcount):
-            xpat = f'{i:0{xcount}b}'
+        for xcomb in product('01', repeat=out.count('X')):
+            xlist = list(xcomb)
             pat = []
-            xc = 0
             for j in out:
                 if j == 'X':
-                    pat.append(xpat[xc])
-                    xc += 1
+                    pat.append(xlist.pop())
                 else:
                     pat.append(j)
-            valstr = ''.join(pat)
-            val = int(valstr, 2)
-            outout.append(val)
+            outout.append(int(''.join(pat), 2))
         return outout
 
     def run(self, mode):
