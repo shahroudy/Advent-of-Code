@@ -84,6 +84,8 @@ if __name__ == '__main__':
     assert test1.evaluate_sum_exps(mode=2) == 231
     test2 = OperationOrder('test2.txt')
     assert test2.evaluate_sum_exps(mode=1) == 51
+    test3 = OperationOrder('test3.txt')
+    assert test3.evaluate_sum_exps(mode=2) == 23340
 
     op_order = OperationOrder('input.txt')
     print(op_order.evaluate_sum_exps(mode=1))
