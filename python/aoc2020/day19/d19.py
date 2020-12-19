@@ -3,7 +3,7 @@ from collections import *
 from itertools import *
 from myutils.file_reader import *
 
-MAX_PUMBPING = 10
+MAX_REPEAT = 10
 
 
 class MonsterMessages:
@@ -19,12 +19,16 @@ class MonsterMessages:
                 if self.regex[42]:
                     self.regex[8] = f'({self.regex[42]}+)'
                     if self.regex[31]:
-                        r11 = '('
-                        acc = ''
-                        for i in range(MAX_PUMBPING):
-                            acc = self.regex[42] + acc + self.regex[31]
-                            r11 = r11 + acc + '|'
-                        self.regex[11] = r11[:-1]+')'
+                        r11 = str()
+                        for i in range(MAX_REPEAT):
+                            istr = '{'+str(i+1)+'}'
+                            r11 += \
+                                self.regex[42] + \
+                                istr + \
+                                self.regex[31] + \
+                                istr + \
+                                '|'
+                        self.regex[11] = '(' + r11[:-1] + ')'
             for line in self.rules:
                 sides = line.split(':')
                 n = int(sides[0])
