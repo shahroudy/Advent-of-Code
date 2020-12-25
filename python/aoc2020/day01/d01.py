@@ -16,7 +16,7 @@ for n in values:
     if dd.get(n, None) is not None:
         print(n * dd[n])
     for k, v in d.items():
-        dd[k-n] = d[k]*n
+        dd[k-n] = v * n
     d[2020-n] = n
 
 # second challenge, using brute-force looping!
