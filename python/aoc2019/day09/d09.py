@@ -107,21 +107,25 @@ class IntcodeComputer:
     def set_phase(self, phase):
         self.input.append(phase)
 
-    def step(self, input: int):
+    def step(self, input=None):
         """
-        This mode is used in day 7 code,
+        This mode was originally used in day 7 code,
         it just starts with an input and stops when an output is generated,
         it will be returned with a new input later,
         this will go on till the computer halts!
+        For day 11 code, this has been changed to output two codes
         """
-        self.input.append(input)
-        while not (self.output or self.halted):
+        if input is not None:
+            self.input.append(input)
+        while not (len(self.output) == 2 or self.halted):
             command = self.read_op_code()
             self.execute_command(command)
         if self.halted:
             return None
         else:
-            return self.output.pop()
+            out = self.output
+            self.output = deque()
+            return out
 
 
 if __name__ == '__main__':
