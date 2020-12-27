@@ -24,7 +24,7 @@ class IntcodeComputer:
         code = self.program[self.head]
         parts = [code % 100]
         code //= 100
-        for i in range(3):
+        for _ in range(3):
             parts.append(code % 10)
             code //= 10
         return parts
@@ -67,7 +67,6 @@ class IntcodeComputer:
         args = self.read_operands(command)
         if op == 99:
             self.halted = True
-            return
         elif op in [1, 2, 7, 8, 3]:
             value = 0
             if op == 1:
@@ -113,19 +112,18 @@ class IntcodeComputer:
         it just starts with an input and stops when an output is generated,
         it will be returned with a new input later,
         this will go on till the computer halts!
-        For day 11 code, this has been changed to output two codes
+        For day 11 and 13 code, this has been changed to output multiple codes
         """
         if input is not None:
             self.input.append(input)
-        while not (len(self.output) == 2 or self.halted):
+        while not self.halted:
             command = self.read_op_code()
+            if (command[0] == 3) and (len(self.input) == 0):
+                break
             self.execute_command(command)
-        if self.halted:
-            return None
-        else:
-            out = self.output
-            self.output = deque()
-            return out
+        out = self.output
+        self.output = deque()
+        return out
 
 
 if __name__ == '__main__':

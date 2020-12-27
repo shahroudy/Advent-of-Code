@@ -14,11 +14,9 @@ for puzzle in [1, 2]:
 
     painted = set()
 
-    while True:
+    while not ic.halted:
         input = 1 if panels[(x, y)] else 0
         out = ic.step(input)
-        if out is None:
-            break
         code = out.popleft()
         move = out.popleft()
         if code == 0:
