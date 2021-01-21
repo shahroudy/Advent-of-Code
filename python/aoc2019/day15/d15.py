@@ -1,7 +1,7 @@
-import os, re, time
+import os
+import time
 from collections import defaultdict, deque
-from itertools import product
-from myutils.file_reader import *
+from myutils.file_reader import read_int_list
 from aoc2019.day09.d09 import IntcodeComputer
 
 
@@ -25,24 +25,24 @@ class OxygenSystem:
         print()
         for j in range(miny, maxy+1):
             for i in range(minx, maxx+1):
-                if (i,j) == self.oxygen:
+                if (i, j) == self.oxygen:
                     ch = 'O'
                 elif j == self.y and i == self.x:
-                    ch = 'D'
+                    ch = 'd'
                 else:
                     m = self.map[(i, j)]
                     if m > 0:
-                        ch = ' '
+                        ch = '.'
                     elif m < 0:
                         ch = '#'
                     else:
-                        ch = '.'
+                        ch = ' '
                 print(ch, end='')
             print()
-        time.sleep(0.1)
+        time.sleep(0.05)
 
     def neighbours(self, x, y):
-        return [(x+i, y+j) for i, j in [(-1,0), (1,0), (0,-1),(0,1)]]
+        return [(x+i, y+j) for i, j in [(-1, 0), (1, 0), (0, -1), (0, 1)]]
 
     def moves_to(self, target):
         conn = dict()
@@ -74,20 +74,20 @@ class OxygenSystem:
             c = n
         return result
 
-    def calc1(self):
+    def navigate(self, display=False):
         self.reset()
         self.x = self.y = 0
         self.map[(0, 0)] = 1
-        to_visit = deque()
+        to_visit = deque([(0, 1)])  # first must see neighbor
         tape = deque()
         self.oxygen = None
-        while not self.oxygen:
+        while to_visit:
             to_visit = deque([p for p in to_visit if self.map[p] == 0])
             ns = [n for n in self.neighbours(self.x, self.y)
                   if self.map[n] == 0]
             to_visit.extend(ns)
             while not tape:
-                tape = self.moves_to(to_visit.popleft())
+                tape = self.moves_to(to_visit.pop())
 
             move = tape.popleft()
 
@@ -104,6 +104,8 @@ class OxygenSystem:
                 dest = (self.x-1, self.y)
             elif move == 4:
                 dest = (self.x+1, self.y)
+            else:
+                raise Exception('invalid move')
 
             if output == 0:
                 self.map[dest] = -1
@@ -112,17 +114,34 @@ class OxygenSystem:
                 self.x, self.y = dest
                 if output == 2:
                     self.oxygen = dest
-
-        return len(self.moves_to((0,0)))
-
-    def calc2(self, input):
+            if display:
+                self.display_map()
         return
 
-    def calc3(self, input):
-        return
+    def calc_oxygen_distance(self):
+        self.x, self.y = self.oxygen
+        return len(self.moves_to((0, 0)))
+
+    def calc_filling_time(self):
+        q = [self.oxygen]
+        self.map[self.oxygen] = 2
+        t = 0
+        while True:
+            newq = []
+            for c in q:
+                for n in self.neighbours(*c):
+                    if self.map[n] == 1:
+                        newq.append(n)
+                        self.map[n] = 2
+            if newq:
+                t += 1
+                q = newq
+            else:
+                return t
 
 
 if __name__ == '__main__':
     oxygen_system = OxygenSystem('input.txt')
-    print(oxygen_system.calc1())
-    print(oxygen_system.calc2())
+    oxygen_system.navigate()
+    print(oxygen_system.calc_oxygen_distance())
+    print(oxygen_system.calc_filling_time())
